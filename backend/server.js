@@ -27,8 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Allow both Netlify and Render frontend origins
 const allowedOrigins = [
-  'https://passmongoop.netlify.app/',
-  'https://pass-op-dkz6.onrender.com/'
+  'https://passmongoop.netlify.app',
+  'https://pass-op-dkz6.onrender.com'
 ];
 app.use(cors({
   origin: function(origin, callback) {
@@ -327,7 +327,7 @@ app.post('/api/auth/forgot-password', checkDatabaseConnection, async (req, res) 
     await usersCollection.updateOne({ email }, { $set: { resetToken: token, resetTokenExpiration: tokenExpiration } });
 
     // Send password reset email
-    const emailSent = await sendEmail(email, 'Password Reset', `<p>You requested to reset your password. Click <a href="http://localhost:5173/reset-password?token=${token}">here</a> to reset it.</p>`);
+    const emailSent = await sendEmail(email, 'Password Reset', `<p>You requested to reset your password. Click <a href="https://passmongoop.netlify.app/reset-password?token=${token}">here</a> to reset it.</p>`);
 
     if (emailSent) {
       res.json({ message: 'Password reset email sent. Please check your inbox.' });
