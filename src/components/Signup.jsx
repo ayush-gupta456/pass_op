@@ -33,7 +33,7 @@ const Signup = () => {
 
         try {
             // FOR LOCAL DEVELOPMENT - Using proxy
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, email, password }),
