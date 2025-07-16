@@ -20,7 +20,7 @@ const Manager = () => {
   const [error, setError] = useState(null);
   const useBackend = true; // Always use backend
   // FOR LOCAL DEVELOPMENT - Using proxy
-  const API_URL_BASE = '/api/passwords';
+  const API_URL_BASE = 'https://pass-op-dkz6.onrender.com/api/passwords';
   // FOR DEPLOYMENT - Update the line above to your production URL:
   // const API_URL_BASE = 'https://your-production-domain.com/api/passwords';
 
