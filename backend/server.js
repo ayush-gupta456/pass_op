@@ -15,10 +15,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Global variables
-let db;
-let collection;
-let usersCollection;
-let client;
+let db; // MongoDB database instance
+let collection; // 'passwords' collection
+let usersCollection; // 'users' collection
+let client; // MongoDB client
 
 // Middleware
 app.use(express.json({ limit: '10mb' }));
@@ -48,7 +48,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Connect to MongoDB
+/**
+ * Connects to the MongoDB database using the URI from the environment variables.
+ */
 async function connectToDatabase() {
   try {
     const uri = process.env.MONGO_URI;
@@ -78,20 +80,34 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Helper function to validate email format
+/**
+ * Validates an email address using a regular expression.
+ * @param {string} email - The email address to validate.
+ * @returns {boolean} - True if the email is valid, false otherwise.
+ */
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
-// Helper function to validate username
+/**
+ * Validates a username.
+ * @param {string} username - The username to validate.
+ * @returns {boolean} - True if the username is valid, false otherwise.
+ */
 function isValidUsername(username) {
   // Username: 3-20 characters, alphanumeric and underscores only
   const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
   return usernameRegex.test(username);
 }
 
-// Helper function to send email
+/**
+ * Sends an email using Nodemailer.
+ * @param {string} to - The recipient's email address.
+ * @param {string} subject - The subject of the email.
+ * @param {string} html - The HTML content of the email.
+ * @returns {Promise<boolean>} - True if the email was sent successfully, false otherwise.
+ */
 async function sendEmail(to, subject, html) {
   try {
     const info = await transporter.sendMail({
@@ -108,6 +124,12 @@ async function sendEmail(to, subject, html) {
   }
 }
 
+/**
+ * Middleware to check if the database is connected.
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @param {function} next - The next middleware function.
+ */
 function checkDatabaseConnection(req, res, next) {
   if (!client || !db || !collection || !usersCollection) {
     return res.status(503).json({ error: 'Database not connected. Try again later.' });
@@ -115,7 +137,12 @@ function checkDatabaseConnection(req, res, next) {
   next();
 }
 
-// Authentication middleware
+/**
+ * Middleware to authenticate a JWT token.
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @param {function} next - The next middleware function.
+ */
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
