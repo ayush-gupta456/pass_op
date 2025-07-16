@@ -24,7 +24,7 @@ const Login = () => {
 
         try {
             // FOR LOCAL DEVELOPMENT - Using proxy
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ identifier: username, password }),
@@ -118,7 +118,7 @@ const Login = () => {
                                     }
                                     setForgotLoading(true);
                                     try {
-                                        const response = await fetch('/api/auth/forgot-password', {
+                                        const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/forgot-password', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
                                             body: JSON.stringify({ email: forgotEmail }),
