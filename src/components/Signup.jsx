@@ -3,14 +3,26 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+/**
+ * The Signup component handles user registration.
+ * @returns {React.ReactElement} - The signup form.
+ */
 const Signup = () => {
     const [form, setForm] = useState({ username: '', email: '', password: '' });
     const navigate = useNavigate();
 
+    /**
+     * Handles changes to the form fields.
+     * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
+     */
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    /**
+     * Handles the form submission.
+     * @param {React.FormEvent<HTMLFormElement>} e - The form event.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { username, email, password } = form;
@@ -20,7 +32,6 @@ const Signup = () => {
         }
 
         try {
-// FOR LOCAL DEVELOPMENT - Using proxy
             const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

@@ -3,6 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+/**
+ * The Login component handles user authentication.
+ * @returns {React.ReactElement} - The login form.
+ */
 const Login = () => {
     const [form, setForm] = useState({ username: '', password: '' });
     const [showForgot, setShowForgot] = useState(false);
@@ -10,10 +14,18 @@ const Login = () => {
     const [forgotLoading, setForgotLoading] = useState(false);
     const navigate = useNavigate();
 
+    /**
+     * Handles changes to the form fields.
+     * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
+     */
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+    /**
+     * Handles the form submission.
+     * @param {React.FormEvent<HTMLFormElement>} e - The form event.
+     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { username, password } = form;
