@@ -3,7 +3,7 @@
 
 **PassKeeper** is a secure, responsive, and lightweight password manager built with the MERN stack (MongoDB, Express, React, Node.js). It allows users to manage and store their login credentials with ease and confidence.
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/your-netlify-badge/deploy-status)](https://passmongoop.netlify.app)
+[[Netlify Status]](https://passmongoop.netlify.app)
 
 ---
 
@@ -172,5 +172,5 @@ git commit -m "✨ Added new feature"
 ## 👨‍💻 Author
 
 **Ayush Gupta**  
-📧 *[Email]*  
+📧 [Email](omayush456.ag@gmail.com)
 🔗 [GitHub](https://github.com/ayush-gupta456)
