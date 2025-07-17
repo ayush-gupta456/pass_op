@@ -146,9 +146,47 @@ This project uses **Nodemailer** to send password reset emails using Gmail SMTP.
 
 ---
 
-## 📸 Screenshots
+## 📂 Folder Structure
 
-📷 _Coming Soon..._ Showcase your app UI with screenshots.
+```
+.
+├── backend
+│   ├── config
+│   │   └── db.js
+│   ├── middleware
+│   │   └── auth.js
+│   ├── routes
+│   │   ├── auth.js
+│   │   └── passwords.js
+│   ├── utils
+│   │   └── email.js
+│   ├── .env.example
+│   ├── API.md
+│   ├── README.md
+│   ├── package.json
+│   ├── server.js
+│   └── ...
+├── public
+│   ├── icons
+│   │   ├── eye.png
+│   │   └── ...
+│   └── passkey.png
+├── src
+│   ├── components
+│   │   ├── Footer.jsx
+│   │   ├── Login.jsx
+│   │   ├── Manager.jsx
+│   │   ├── Navbar.jsx
+│   │   └── Signup.jsx
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+├── .gitignore
+├── index.html
+├── package.json
+├── README.md
+└── ...
+```
 
 ---
 
