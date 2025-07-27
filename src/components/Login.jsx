@@ -12,6 +12,7 @@ const Login = () => {
     const [showForgot, setShowForgot] = useState(false);
     const [forgotEmail, setForgotEmail] = useState('');
     const [forgotLoading, setForgotLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     /**
@@ -109,6 +110,7 @@ const Login = () => {
               onChange={handleChange}
               className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
             />
+             <div className="relative"> 
             <input
               type="password"
               name="password"
@@ -117,6 +119,13 @@ const Login = () => {
               onChange={handleChange}
               className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
             />
+                 <img
+                src={showPassword ? "/icons/eyecross.png" : "/icons/eye.png"}
+                alt="toggle visibility"
+                className="w-6 h-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            </div>
             <button
               type="submit"
               className="w-full px-6 py-3 bg-purple-700 text-white font-semibold rounded-full hover:bg-purple-800 transition"
