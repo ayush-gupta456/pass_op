@@ -10,6 +10,7 @@ const Login = () => {
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotLoading, setForgotLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const passwordRef = useRef(null);
   const navigate = useNavigate();
 
@@ -20,11 +21,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { username, password } = form;
+
     if (username.length < 4 || password.length < 4) {
       toast('Fields must be at least 4 characters', { type: 'error' });
       return;
     }
 
+    setLoading(true);
     try {
       const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/login', {
         method: 'POST',
@@ -32,17 +35,18 @@ const Login = () => {
         body: JSON.stringify({ identifier: username, password }),
       });
 
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
         localStorage.setItem('token', data.token);
         toast('Logged in successfully!', { type: 'success' });
         navigate('/');
       } else {
-        const data = await response.json();
         toast(data.error || 'Invalid credentials', { type: 'error' });
       }
     } catch (error) {
       toast('Failed to login', { type: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,8 +116,8 @@ const Login = () => {
                 placeholder="Password"
                 value={form.password}
                 onChange={handleChange}
-                className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
                 ref={passwordRef}
+                className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
               />
               <span
                 className="absolute transform -translate-y-1/2 right-3 top-1/2 cursor-pointer"
@@ -128,9 +132,11 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className="w-full px-6 py-3 bg-purple-700 text-white font-semibold rounded-full hover:bg-purple-800 transition"
+              className="w-full px-6 py-3 bg-purple-700 text-white font-semibold rounded-full hover:bg-purple-800 transition flex items-center justify-center gap-2"
+              disabled={loading}
             >
-              Login
+              {loading && <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
 
@@ -166,7 +172,7 @@ const Login = () => {
             <div className="flex justify-center gap-4">
               <button
                 type="button"
-                className="px-6 py-2 text-white bg-blue-600 rounded-full"
+                className="px-6 py-2 text-white bg-blue-600 rounded-full flex items-center gap-2"
                 disabled={forgotLoading}
                 onClick={async () => {
                   if (!forgotEmail || forgotEmail.length < 4) {
@@ -195,6 +201,7 @@ const Login = () => {
                   }
                 }}
               >
+                {forgotLoading && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
                 {forgotLoading ? 'Sending...' : 'Send Reset Link'}
               </button>
               <button
