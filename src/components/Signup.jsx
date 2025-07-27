@@ -53,7 +53,8 @@ const Signup = () => {
       <ToastContainer position="top-right" autoClose={5000} theme="dark" />
       <div className="flex items-center justify-center min-h-[80.7vh] bg-purple-50 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-          <h1 className="text-4xl font-bold text-center text-purlple-500">Sign up</h1>
+          <h1 className="text-4xl font-bold text-center text-purple-800">Sign up</h1>
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             <input
               value={form.username}
