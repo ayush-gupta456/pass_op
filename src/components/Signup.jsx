@@ -86,9 +86,9 @@ const Signup = () => {
                 onClick={togglePasswordVisibility}
               >
                 {showPassword ? (
-                  <EyeSlashIcon className="w-5 h-5 text-purple-700" />
+                  <EyeSlashIcon className="w-5 h-5" />
                 ) : (
-                  <EyeIcon className="w-5 h-5 text-purple-700" />
+                  <EyeIcon className="w-5 h-5" />
                 )}
               </span>
             </div>
