@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { EyeIcon, EyeSlashIcon } from './Icons'; // ✅ Custom icons
+import { EyeIcon, EyeSlashIcon } from './Icons';
 
 const Signup = () => {
   const [form, setForm] = useState({ username: '', email: '', password: '' });
@@ -81,7 +81,6 @@ const Signup = () => {
                 type={showPassword ? 'text' : 'password'}
                 name="password"
               />
-              {/* ✅ Password visibility toggle icon */}
               <span
                 className="absolute transform -translate-y-1/2 right-3 top-1/2 cursor-pointer"
                 onClick={togglePasswordVisibility}
@@ -95,7 +94,7 @@ const Signup = () => {
             </div>
             <button
               type="submit"
-              className="flex items-center justify-center w-full px-8 py-2 text-white bg-blue-600 rounded-full"
+              className="flex items-center justify-center w-full px-8 py-2 text-white bg-purple-700 rounded-full"
               disabled={loading}
             >
               {loading ? (
