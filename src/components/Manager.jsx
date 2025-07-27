@@ -209,8 +209,8 @@ const Manager = () => {
       <ToastContainer position="top-right" autoClose={5000} theme="dark" />
       <div className="p-3 md:mycontainer min-h-[80.7vh]">
         <h1 className="text-4xl font-bold text-center text">
-          <span className="text-purple-400"></span>
-          pass<span className="text-purple-500">KEEPER/ </span>
+          <span className="text-purple-500">&lt; </span>
+          pass<span className="text-purple-500">KEEPER/ &gt;</span>
         </h1>
         <p className="text-lg text-center text-purple-900">
           Your own Password Manager
