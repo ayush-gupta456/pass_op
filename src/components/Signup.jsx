@@ -2,29 +2,18 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { EyeIcon, EyeSlashIcon } from './Icons'; // ✅ Custom icons
 
-/**
- * The Signup component handles user registration.
- * @returns {React.ReactElement} - The signup form.
- */
 const Signup = () => {
   const [form, setForm] = useState({ username: '', email: '', password: '' });
-  const [loading, setLoading] = useState(false); // ✅ Loader state
-  const [showPassword, setShowPassword] = useState(false); // ✅ Toggle password visibility
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  /**
-   * Handles changes to the form fields.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
-   */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  /**
-   * Handles the form submission.
-   * @param {React.FormEvent<HTMLFormElement>} e - The form event.
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { username, email, password } = form;
@@ -34,7 +23,7 @@ const Signup = () => {
     }
 
     try {
-      setLoading(true); // ✅ Show loader
+      setLoading(true);
       const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,8 +40,12 @@ const Signup = () => {
     } catch (error) {
       toast('Failed to sign up', { type: 'error' });
     } finally {
-      setLoading(false); // ✅ Hide loader
+      setLoading(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
   };
 
   return (
@@ -84,23 +77,34 @@ const Signup = () => {
                 onChange={handleChange}
                 placeholder="Password"
                 className="w-full p-4 py-1 border border-purple-500 rounded-full pr-12"
-                type={showPassword ? 'text' : 'password'} // ✅ Toggle visibility
+                type={showPassword ? 'text' : 'password'}
                 name="password"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)} // ✅ Toggle state
-                className="absolute top-1/2 right-4 transform -translate-y-1/2 text-sm text-purple-700"
+              {/* ✅ Password visibility toggle icon */}
+              <span
+                className="absolute transform -translate-y-1/2 right-3 top-1/2 cursor-pointer"
+                onClick={togglePasswordVisibility}
               >
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
+                {showPassword ? (
+                  <EyeSlashIcon className="w-5 h-5 text-purple-700" />
+                ) : (
+                  <EyeIcon className="w-5 h-5 text-purple-700" />
+                )}
+              </span>
             </div>
             <button
               type="submit"
-              className="w-full px-8 py-2 text-white bg-blue-600 rounded-full"
+              className="flex items-center justify-center w-full px-8 py-2 text-white bg-blue-600 rounded-full"
               disabled={loading}
             >
-              {loading ? 'Signing up...' : 'Sign up'} {/* ✅ Show loader text */}
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Signing up...
+                </>
+              ) : (
+                'Sign up'
+              )}
             </button>
           </form>
           <p className="text-center">
