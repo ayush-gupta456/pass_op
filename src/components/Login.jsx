@@ -115,7 +115,7 @@ const Login = () => {
               placeholder="Password"
               value={form.password}
               onChange={handleChange}
-              className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
             />
             <button
               type="submit"
@@ -152,7 +152,7 @@ const Login = () => {
               placeholder="Enter your registered email"
               value={forgotEmail}
               onChange={(e) => setForgotEmail(e.target.value)}
-              className="w-full p-3 mb-4 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full p-3 mb-4 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
             />
             <div className="flex justify-center gap-4 flex-wrap">
               <button
