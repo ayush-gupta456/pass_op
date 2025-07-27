@@ -9,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
  */
 const Signup = () => {
     const [form, setForm] = useState({ username: '', email: '', password: '' });
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     /**
@@ -31,14 +33,13 @@ const Signup = () => {
             return;
         }
 
+        setLoading(true);
         try {
             const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, email, password }),
             });
-            // FOR DEPLOYMENT - Update the URL above to your production URL:
-            // const response = await fetch('https://your-production-domain.com/api/auth/register', {
 
             if (response.ok) {
                 toast('Signed up successfully!', { type: 'success' });
@@ -49,6 +50,8 @@ const Signup = () => {
             }
         } catch (error) {
             toast('Failed to sign up', { type: 'error' });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -75,19 +78,33 @@ const Signup = () => {
                             type="email"
                             name="email"
                         />
-                        <input
-                            value={form.password}
-                            onChange={handleChange}
-                            placeholder="Password"
-                            className="w-full p-4 py-1 border border-purple-500 rounded-full"
-                            type="password"
-                            name="password"
-                        />
+                        <div className="relative">
+                            <input
+                                value={form.password}
+                                onChange={handleChange}
+                                placeholder="Password"
+                                className="w-full p-4 py-1 border border-purple-500 rounded-full"
+                                type={showPassword ? 'text' : 'password'}
+                                name="password"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-600"
+                            >
+                                {showPassword ? (
+                                    <img src="/icons/eyecross.png" alt="Hide" className="w-5 h-5" />
+                                ) : (
+                                    <img src="/icons/eye.png" alt="Show" className="w-5 h-5" />
+                                )}
+                            </button>
+                        </div>
                         <button
                             type="submit"
-                            className="w-full px-8 py-2 text-white bg-blue-600 rounded-full"
+                            disabled={loading}
+                            className="w-full px-8 py-2 text-white bg-blue-600 rounded-full disabled:bg-blue-400"
                         >
-                            Sign up
+                            {loading ? 'Signing up...' : 'Sign up'}
                         </button>
                     </form>
                     <p className="text-center">
