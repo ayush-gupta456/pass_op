@@ -69,7 +69,7 @@ const Login = () => {
             <span role="img" aria-label="lock">🔐</span> About <span className="text-purple-800">passKEEPER</span>
           </h2>
           <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4">
-            <strong>passKEEPER</strong> is a secure and intuitive password manager built using the MERN stack. It allows users to safely store, manage, and retrieve their passwords from anywhere.
+            <strong>passKEEPER</strong> is a secure and intuitive password manager built using the MERN stack. It allows users to safely store, manage, and retrieve their passwords from anywhere. With encrypted backend storage and real-time accessibility, your credentials stay safe yet accessible.
           </p>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1 mt-6">
