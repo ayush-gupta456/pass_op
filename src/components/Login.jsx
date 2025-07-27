@@ -1,73 +1,60 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CopyIcon, DeleteIcon, EditIcon, EyeIcon, EyeSlashIcon, GenerateIcon, SaveIcon } from './Icons';
 
-/**
- * The Login component handles user authentication.
- * @returns {React.ReactElement} - The login form.
- */
 const Login = () => {
-    const [form, setForm] = useState({ username: '', password: '' });
-    const [showForgot, setShowForgot] = useState(false);
-    const [forgotEmail, setForgotEmail] = useState('');
-    const [forgotLoading, setForgotLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
+  const [form, setForm] = useState({ username: '', password: '' });
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const passwordRef = useRef(null);
+  const navigate = useNavigate();
 
-    /**
-     * Handles changes to the form fields.
-     * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
-     */
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    /**
-     * Handles the form submission.
-     * @param {React.FormEvent<HTMLFormElement>} e - The form event.
-     */
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const { username, password } = form;
-        if (username.length < 4 || password.length < 4) {
-            toast('Fields must be at least 4 characters', { type: 'error' });
-            return;
-        }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { username, password } = form;
+    if (username.length < 4 || password.length < 4) {
+      toast('Fields must be at least 4 characters', { type: 'error' });
+      return;
+    }
 
-        try {
-            // FOR LOCAL DEVELOPMENT - Using proxy
-            const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ identifier: username, password }),
-            });
-            // FOR DEPLOYMENT - Update the URL above to your production URL:
-            // const response = await fetch('https://your-production-domain.com/api/auth/login', {
+    try {
+      const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: username, password }),
+      });
 
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('token', data.token);
-                toast('Logged in successfully!', { type: 'success' });
-                navigate('/');
-            } else {
-                const data = await response.json();
-                toast(data.error || 'Invalid credentials', { type: 'error' });
-            }
-        } catch (error) {
-            toast('Failed to login', { type: 'error' });
-        }
-    };
-      const togglePasswordVisibility = () => {
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        toast('Logged in successfully!', { type: 'success' });
+        navigate('/');
+      } else {
+        const data = await response.json();
+        toast(data.error || 'Invalid credentials', { type: 'error' });
+      }
+    } catch (error) {
+      toast('Failed to login', { type: 'error' });
+    }
+  };
+
+  const togglePasswordVisibility = () => {
     if (passwordRef.current) {
-      const isPasswordHidden = passwordRef.current.type === "password";
-      passwordRef.current.type = isPasswordHidden ? "text" : "password";
+      const isPasswordHidden = passwordRef.current.type === 'password';
+      passwordRef.current.type = isPasswordHidden ? 'text' : 'password';
       setShowPassword(!showPassword);
     }
   };
 
-    return (
+  return (
     <>
       <ToastContainer position="top-right" autoClose={5000} theme="dark" />
 
@@ -118,20 +105,24 @@ const Login = () => {
               onChange={handleChange}
               className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
             />
-             <div className="relative"> 
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
-            />
-              <span className="absolute transform -translate-y-1/2 right-3 top-1/2">
+            <div className="relative">
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
+                ref={passwordRef}
+              />
+              <span
+                className="absolute transform -translate-y-1/2 right-3 top-1/2 cursor-pointer"
+                onClick={togglePasswordVisibility}
+              >
                 {showPassword ? (
-                  <EyeSlashIcon className="w-5 h-5" onClick={togglePasswordVisibility} />
+                  <EyeSlashIcon className="w-5 h-5" />
                 ) : (
-                  <EyeIcon className="w-5 h-5" onClick={togglePasswordVisibility} />
+                  <EyeIcon className="w-5 h-5" />
                 )}
               </span>
             </div>
@@ -160,65 +151,65 @@ const Login = () => {
         </div>
       </div>
 
-{/* Forgot Password Modal */}
-            {showForgot && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                    <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-                        <h2 className="mb-4 text-2xl font-bold text-center">Forgot Password</h2>
-                        <input
-                            type="email"
-                            className="w-full p-4 py-1 mb-4 border border-purple-500 rounded-full"
-                            placeholder="Enter your registered email"
-                            value={forgotEmail}
-                            onChange={e => setForgotEmail(e.target.value)}
-                        />
-                        <div className="flex justify-center gap-4">
-                            <button
-                                type="button"
-                                className="px-6 py-2 text-white bg-blue-600 rounded-full"
-                                disabled={forgotLoading}
-                                onClick={async () => {
-                                    if (!forgotEmail || forgotEmail.length < 4) {
-                                        toast('Please enter a valid email', { type: 'error' });
-                                        return;
-                                    }
-                                    setForgotLoading(true);
-                                    try {
-                                        const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/forgot-password', {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ email: forgotEmail }),
-                                        });
-                                        const data = await response.json();
-                                        if (response.ok) {
-                                            toast(data.message || 'Password reset email sent!', { type: 'success' });
-                                            setShowForgot(false);
-                                            setForgotEmail('');
-                                        } else {
-                                            toast(data.error || 'Failed to send reset email', { type: 'error' });
-                                        }
-                                    } catch (err) {
-                                        toast('Failed to send reset email', { type: 'error' });
-                                    } finally {
-                                        setForgotLoading(false);
-                                    }
-                                }}
-                            >
-                                {forgotLoading ? 'Sending...' : 'Send Reset Link'}
-                            </button>
-                            <button
-                                type="button"
-                                className="px-6 py-2 text-gray-700 bg-gray-200 rounded-full"
-                                onClick={() => { setShowForgot(false); setForgotEmail(''); }}
-                            >
-                                Cancel
+      {/* Forgot Password Modal */}
+      {showForgot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+            <h2 className="mb-4 text-2xl font-bold text-center">Forgot Password</h2>
+            <input
+              type="email"
+              className="w-full p-4 py-1 mb-4 border border-purple-500 rounded-full"
+              placeholder="Enter your registered email"
+              value={forgotEmail}
+              onChange={e => setForgotEmail(e.target.value)}
+            />
+            <div className="flex justify-center gap-4">
+              <button
+                type="button"
+                className="px-6 py-2 text-white bg-blue-600 rounded-full"
+                disabled={forgotLoading}
+                onClick={async () => {
+                  if (!forgotEmail || forgotEmail.length < 4) {
+                    toast('Please enter a valid email', { type: 'error' });
+                    return;
+                  }
+                  setForgotLoading(true);
+                  try {
+                    const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/forgot-password', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ email: forgotEmail }),
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                      toast(data.message || 'Password reset email sent!', { type: 'success' });
+                      setShowForgot(false);
+                      setForgotEmail('');
+                    } else {
+                      toast(data.error || 'Failed to send reset email', { type: 'error' });
+                    }
+                  } catch (err) {
+                    toast('Failed to send reset email', { type: 'error' });
+                  } finally {
+                    setForgotLoading(false);
+                  }
+                }}
+              >
+                {forgotLoading ? 'Sending...' : 'Send Reset Link'}
+              </button>
+              <button
+                type="button"
+                className="px-6 py-2 text-gray-700 bg-gray-200 rounded-full"
+                onClick={() => { setShowForgot(false); setForgotEmail(''); }}
+              >
+                Cancel
               </button>
             </div>
           </div>
         </div>
       )}
     </>
-    );
+  );
 };
 
-export default Login;
+export default Login;
