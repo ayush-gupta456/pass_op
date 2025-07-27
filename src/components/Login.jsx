@@ -3,10 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-/**
- * The Login component handles user authentication.
- * @returns {React.ReactElement} - The login form.
- */
 const Login = () => {
     const [form, setForm] = useState({ username: '', password: '' });
     const [showForgot, setShowForgot] = useState(false);
@@ -14,18 +10,10 @@ const Login = () => {
     const [forgotLoading, setForgotLoading] = useState(false);
     const navigate = useNavigate();
 
-    /**
-     * Handles changes to the form fields.
-     * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
-     */
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    /**
-     * Handles the form submission.
-     * @param {React.FormEvent<HTMLFormElement>} e - The form event.
-     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { username, password } = form;
@@ -35,14 +23,11 @@ const Login = () => {
         }
 
         try {
-            // FOR LOCAL DEVELOPMENT - Using proxy
             const response = await fetch('https://pass-op-dkz6.onrender.com/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ identifier: username, password }),
             });
-            // FOR DEPLOYMENT - Update the URL above to your production URL:
-            // const response = await fetch('https://your-production-domain.com/api/auth/login', {
 
             if (response.ok) {
                 const data = await response.json();
@@ -103,6 +88,31 @@ const Login = () => {
                             Sign up
                         </Link>
                     </p>
+                </div>
+            </div>
+
+            {/* About Section */}
+            <div className="px-6 py-12 bg-white text-center animate-fadeInUp">
+                <h2 className="text-3xl font-bold text-purple-700 mb-4">🔐 About passKEEPER</h2>
+                <p className="max-w-3xl mx-auto text-gray-600 text-lg leading-relaxed">
+                    <strong>passKEEPER</strong> is a secure and intuitive password manager built using the MERN stack.
+                    It allows users to safely store, manage, and retrieve their passwords from anywhere.
+                    With encrypted backend storage and real-time accessibility, your credentials stay safe yet accessible.
+                </p>
+
+                <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto text-left">
+                    <div className="p-6 rounded-lg bg-purple-50 shadow hover:scale-105 transition-transform duration-300">
+                        <h3 className="text-xl font-semibold text-purple-600 mb-2">🔐 Secure Encryption</h3>
+                        <p className="text-gray-700">Passwords are encrypted before storage, ensuring top-tier protection and privacy.</p>
+                    </div>
+                    <div className="p-6 rounded-lg bg-purple-50 shadow hover:scale-105 transition-transform duration-300">
+                        <h3 className="text-xl font-semibold text-purple-600 mb-2">🌐 Cross-Device Access</h3>
+                        <p className="text-gray-700">Access your passwords securely from any device, anytime with your credentials.</p>
+                    </div>
+                    <div className="p-6 rounded-lg bg-purple-50 shadow hover:scale-105 transition-transform duration-300">
+                        <h3 className="text-xl font-semibold text-purple-600 mb-2">🧠 Smart Organization</h3>
+                        <p className="text-gray-700">Easily organize, update, and find passwords with a clean and modern UI.</p>
+                    </div>
                 </div>
             </div>
 
