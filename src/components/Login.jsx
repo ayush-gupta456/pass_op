@@ -1,4 +1,3 @@
-// Login.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
@@ -16,7 +15,6 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here (API call etc.)
     toast.success('Login submitted');
   };
 
@@ -58,32 +56,39 @@ const Login = () => {
           <h2 className="text-4xl font-bold text-purple-700 mb-4 flex items-center gap-2">
             <span role="img" aria-label="lock">🔐</span> About <span className="text-purple-800">passKEEPER</span>
           </h2>
-          <p className="text-gray-700 text-lg leading-relaxed mb-6">
+          <p className="text-gray-700 text-lg leading-relaxed mb-4">
             <strong>passKEEPER</strong> is a secure and intuitive password manager built using the MERN stack. It allows users to safely store, manage, and retrieve their passwords from anywhere.
           </p>
-          <ul className="space-y-4">
-            <li className="flex items-start gap-3">
-              <span className="text-purple-600 text-xl">🔒</span>
+
+          {/* Features with animation */}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1 mt-6">
+            {/* Secure Encryption */}
+            <div className="flex items-start gap-4 p-5 bg-white/60 backdrop-blur-md rounded-xl shadow-md border border-purple-100 transition hover:scale-[1.02] hover:shadow-lg animate-fadeInUp">
+              <div className="text-purple-600 text-3xl">🔒</div>
               <div>
-                <h4 className="font-semibold text-purple-700">Secure Encryption</h4>
-                <p className="text-gray-600">Your passwords are encrypted before storage.</p>
+                <h4 className="text-lg font-semibold text-purple-700">Secure Encryption</h4>
+                <p className="text-gray-700">Your passwords are encrypted before storage.</p>
               </div>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-600 text-xl">📱</span>
+            </div>
+
+            {/* Cross-Device Access */}
+            <div className="flex items-start gap-4 p-5 bg-white/60 backdrop-blur-md rounded-xl shadow-md border border-purple-100 transition hover:scale-[1.02] hover:shadow-lg animate-fadeInUp delay-150">
+              <div className="text-purple-600 text-3xl">📱</div>
               <div>
-                <h4 className="font-semibold text-purple-700">Cross-Device Access</h4>
-                <p className="text-gray-600">Access your credentials from any device.</p>
+                <h4 className="text-lg font-semibold text-purple-700">Cross-Device Access</h4>
+                <p className="text-gray-700">Access your credentials from any device.</p>
               </div>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-600 text-xl">🧠</span>
+            </div>
+
+            {/* Smart Organization */}
+            <div className="flex items-start gap-4 p-5 bg-white/60 backdrop-blur-md rounded-xl shadow-md border border-purple-100 transition hover:scale-[1.02] hover:shadow-lg animate-fadeInUp delay-300">
+              <div className="text-purple-600 text-3xl">🧠</div>
               <div>
-                <h4 className="font-semibold text-purple-700">Smart Organization</h4>
-                <p className="text-gray-600">Group and manage passwords easily.</p>
+                <h4 className="text-lg font-semibold text-purple-700">Smart Organization</h4>
+                <p className="text-gray-700">Group and manage passwords easily.</p>
               </div>
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
 
         {/* Login Form */}
