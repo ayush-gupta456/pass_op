@@ -107,7 +107,7 @@ const Login = () => {
               placeholder="Username or Email"
               value={form.username}
               onChange={handleChange}
-              className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
             />
             <input
               type="password"
