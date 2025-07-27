@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { FaCopy, FaEdit, FaEye, FaEyeSlash, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { FaCopy, FaEye, FaEyeSlash, FaTrash, FaEdit } from "react-icons/fa";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Manager = () => {
   const [form, setForm] = useState({ site: "", username: "", password: "" });
@@ -81,7 +82,7 @@ const Manager = () => {
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="max-w-4xl p-4 mx-auto">
       <h1 className="mb-6 text-3xl font-bold text-center">Password Manager</h1>
 
       {/* Form */}
@@ -186,6 +187,7 @@ const Manager = () => {
           </table>
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 };
