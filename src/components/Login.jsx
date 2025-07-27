@@ -58,6 +58,13 @@ const Login = () => {
             toast('Failed to login', { type: 'error' });
         }
     };
+      const togglePasswordVisibility = () => {
+    if (passwordRef.current) {
+      const isPasswordHidden = passwordRef.current.type === "password";
+      passwordRef.current.type = isPasswordHidden ? "text" : "password";
+      setShowPassword(!showPassword);
+    }
+  };
 
     return (
     <>
