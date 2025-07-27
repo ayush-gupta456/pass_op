@@ -3,6 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import { CopyIcon, DeleteIcon, EditIcon, EyeIcon, EyeSlashIcon, GenerateIcon, SaveIcon } from './Icons';
+import bcrypt from 'bcryptjs';
 
 const Manager = () => {
   const passwordRef = useRef();
@@ -23,9 +24,7 @@ const Manager = () => {
       setLoading(true);
       setError(null);
       const response = await fetch(API_URL_BASE, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!response.ok) throw new Error('Failed to fetch from backend');
       const data = await response.json();
@@ -65,17 +64,17 @@ const Manager = () => {
       const token = localStorage.getItem('token');
       const url = form.id ? `${API_URL_BASE}/${form.id}` : API_URL_BASE;
       const method = form.id ? 'PUT' : 'POST';
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ site, username, password }),
+        body: JSON.stringify({ site, username, password: hashedPassword }),
       });
       if (!response.ok) throw new Error(`Failed to ${method} password`);
-
-      // Update passwordArray after successful save
       const updatedPassword = await response.json();
       setPasswordArray(prev => {
         if (form.id) {
@@ -84,7 +83,6 @@ const Manager = () => {
           return [...prev, updatedPassword];
         }
       });
-
       setForm({ site: "", username: "", password: "" });
       toast(form.id ? 'Password Updated!' : 'Password Saved!', { type: "success" });
     } catch (err) {
@@ -105,9 +103,7 @@ const Manager = () => {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL_BASE}/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       if (!response.ok) throw new Error('Failed to delete from backend');
       toast('Password Deleted!', { type: "success" });
@@ -135,10 +131,7 @@ const Manager = () => {
   };
 
   const togglePasswordVisibilityInTable = (id) => {
-    setVisiblePasswords(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+    setVisiblePasswords(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const generatePassword = () => {
@@ -156,176 +149,115 @@ const Manager = () => {
     toast('New password generated!', { autoClose: 3000, theme: "dark" });
   };
 
+  const filteredPasswords = passwordArray.filter(item => {
+    const site = item?.site || '';
+    const username = item?.username || '';
+    return (
+      site.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      username.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
-    <>
-      <ToastContainer position="top-right" autoClose={5000} theme="dark" />
-      <div className="p-3 md:mycontainer min-h-[80.7vh]">
-        <h1 className="text-4xl font-bold text-center text">
-          <span className="text-purple-500">&lt; </span>
-          pass<span className="text-purple-500">KEEPER/ &gt;</span>
-        </h1>
-        <p className="text-lg text-center text-purple-900">
-          Your own Password Manager
-        </p>
+    <div className="container mx-auto px-4 py-6">
+      <ToastContainer />
+      <h1 className="text-3xl md:text-4xl font-bold text-center text-purple-600 mb-6">Password Manager</h1>
 
-        <form className="flex flex-col items-center gap-6 p-4 text-black md:gap-8 md:p-6" onSubmit={(e) => e.preventDefault()}>
-          <input
-            value={form.site}
-            onChange={handleChange}
-            placeholder="Enter website URL*"
-            className="w-full p-4 py-1 border border-purple-500 rounded-full"
-            type="text"
-            name="site"
-            id="site"
-          />
-          <div className="flex flex-col w-full gap-4 md:flex-row">
-            <input
-              value={form.username}
-              onChange={handleChange}
-              placeholder="Enter Username*"
-              className="w-full p-4 py-1 border border-purple-500 rounded-full"
-              type="text"
-              name="username"
-              id="username"
-            />
-            <div className="relative">
-              <input
-                ref={passwordRef}
-                value={form.password}
-                onChange={handleChange}
-                placeholder="Enter Password*"
-                className="w-full p-4 py-1 pr-10 border border-purple-500 rounded-full"
-                type="password"
-                name="password"
-                id="password"
-              />
-              <span className="absolute transform -translate-y-1/2 right-3 top-1/2">
-                {showPassword ? (
-                  <EyeSlashIcon className="w-5 h-5" onClick={togglePasswordVisibility} />
-                ) : (
-                  <EyeIcon className="w-5 h-5" onClick={togglePasswordVisibility} />
-                )}
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
-            <button
-              onClick={savePassword}
-              className="flex items-center justify-center gap-2 px-8 py-2 text-white transition-colors bg-blue-600 border border-purple-700 rounded-full w-fit hover:bg-purple-300"
-            >
-              <SaveIcon className="w-5 h-5" />
-              Save Password
-            </button>
-            <button
-              onClick={generatePassword}
-              className="flex items-center justify-center gap-2 px-4 py-2 text-white transition-colors bg-green-600 border border-green-700 rounded-full w-fit hover:bg-green-400"
-            >
-              <GenerateIcon className="w-5 h-5" />
-              Generate Password
-            </button>
-          </div>
-        </form>
-
-        <div className="passwords">
-          <div className="flex items-center justify-between">
-            <h2 className="py-4 text-xl font-bold">Your Passwords</h2>
-            <input
-              type="text"
-              placeholder="Search passwords..."
-              className="px-4 py-1 mb-2 border border-purple-500 rounded-full md:mb-0"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          {error && (
-            <div className="p-3 mb-4 text-orange-800 bg-orange-100 border border-orange-300 rounded">
-              ⚠️ Backend sync failed: {error}
-            </div>
-          )}
-
-          {loading && (
-            <div className="flex items-center justify-center py-8">
-              <div className="w-8 h-8 border-b-2 border-purple-500 rounded-full animate-spin"></div>
-              <span className="ml-2">Loading...</span>
-            </div>
-          )}
-
-          {passwordArray.filter(item =>
-            item.site.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.username.toLowerCase().includes(searchTerm.toLowerCase())
-          ).length === 0 && (
-            <div>No matching passwords found.
-              {passwordArray.length > 0 && searchTerm.length > 0 ? '(Try a different search term)' : ''}
-              {searchTerm.length === 0 && passwordArray.length === 0 ? '(No passwords saved yet)' : ''}
-            </div>
-          )}
-
-          {passwordArray.filter(item =>
-            item.site.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.username.toLowerCase().includes(searchTerm.toLowerCase())
-          ).length !== 0 && (
-            <div className="overflow-x-auto">
-              <table className="w-full mb-10 overflow-hidden rounded-md table-auto">
-                <thead className="text-white bg-blue-600">
-                  <tr>
-                    <th className="py-2 border border-white">Site</th>
-                    <th className="py-2 border border-white">Username</th>
-                    <th className="py-2 border border-white">Password</th>
-                    <th className="py-2 border border-white">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-purple-200">
-                  {passwordArray.filter(item =>
-                    item.site.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    item.username.toLowerCase().includes(searchTerm.toLowerCase())
-                  ).map((item, index) => {
-                    const itemId = item._id || item.id;
-                    return (
-                      <tr key={itemId || index}>
-                        <td className="py-2 text-center border border-white">
-                          <div className="flex items-center justify-center gap-2">
-                            <a href={item.site} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{item.site}</a>
-                            <CopyIcon className="w-4 h-4 cursor-pointer" onClick={() => copyText(item.site)} />
-                          </div>
-                        </td>
-                        <td className="py-2 text-center border border-white">
-                          <div className="flex items-center justify-center gap-2">
-                            <span>{item.username}</span>
-                            <CopyIcon className="w-4 h-4 cursor-pointer" onClick={() => copyText(item.username)} />
-                          </div>
-                        </td>
-                        <td className="py-2 text-center border border-white">
-                          <div className="flex items-center justify-center gap-2">
-                            <span className="font-mono">
-                              {visiblePasswords[itemId] ? item.password : '•'.repeat(item.password.length)}
-                            </span>
-                            <div className="flex gap-1">
-                              {visiblePasswords[itemId] ? (
-                                <EyeSlashIcon className="w-4 h-4 cursor-pointer" onClick={() => togglePasswordVisibilityInTable(itemId)} />
-                              ) : (
-                                <EyeIcon className="w-4 h-4 cursor-pointer" onClick={() => togglePasswordVisibilityInTable(itemId)} />
-                              )}
-                              <CopyIcon className="w-4 h-4 cursor-pointer" onClick={() => copyText(item.password)} />
-                            </div>
-                          </div>
-                        </td>
-                        <td className="justify-center py-2 text-center border border-white">
-                          <div className="flex items-center justify-center gap-2">
-                            <EditIcon className="w-4 h-4 cursor-pointer" onClick={() => editPassword(itemId)} />
-                            <DeleteIcon className="w-4 h-4 cursor-pointer" onClick={() => deletePassword(itemId)} />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+      {loading && (
+        <div className="flex justify-center items-center mb-4">
+          <span className="w-5 h-5 mr-2 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></span>
+          <span>Loading...</span>
         </div>
+      )}
+
+      <div className="mb-6 flex flex-col md:flex-row md:items-center md:space-x-4">
+        <input
+          type="text"
+          name="site"
+          value={form.site}
+          onChange={handleChange}
+          placeholder="Site"
+          className="w-full md:w-1/3 mb-2 md:mb-0 p-2 border border-gray-300 rounded"
+        />
+        <input
+          type="text"
+          name="username"
+          value={form.username}
+          onChange={handleChange}
+          placeholder="Username"
+          className="w-full md:w-1/3 mb-2 md:mb-0 p-2 border border-gray-300 rounded"
+        />
+        <div className="relative w-full md:w-1/3 flex">
+          <input
+            type="password"
+            name="password"
+            ref={passwordRef}
+            value={form.password}
+            onChange={handleChange}
+            placeholder="Password"
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+          <button type="button" className="absolute right-2 top-2" onClick={togglePasswordVisibility}>
+            {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
+          </button>
+        </div>
+        <button onClick={generatePassword} className="bg-blue-500 text-white px-4 py-2 rounded mt-2 md:mt-0">
+          <GenerateIcon className="inline-block w-4 h-4 mr-1" /> Generate
+        </button>
+        <button onClick={savePassword} className="bg-green-600 text-white px-4 py-2 rounded mt-2 md:mt-0">
+          {loading ? (
+            <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          ) : (
+            <SaveIcon className="inline-block w-4 h-4 mr-1" />
+          )}
+          {form.id ? 'Update' : 'Save'}
+        </button>
       </div>
-    </>
+
+      <input
+        type="text"
+        placeholder="Search by site or username"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full mb-4 p-2 border border-gray-300 rounded"
+      />
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="text-left p-3 border">Site</th>
+              <th className="text-left p-3 border">Username</th>
+              <th className="text-left p-3 border">Password</th>
+              <th className="text-center p-3 border">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredPasswords.map((item) => (
+              <tr key={item._id || item.id} className="hover:bg-gray-50">
+                <td className="p-3 border">{item.site}</td>
+                <td className="p-3 border">{item.username}</td>
+                <td className="p-3 border">
+                  <div className="flex items-center">
+                    <span className="mr-2">
+                      {visiblePasswords[item._id || item.id] ? item.password : '•'.repeat(10)}
+                    </span>
+                    <button onClick={() => togglePasswordVisibilityInTable(item._id || item.id)}>
+                      {visiblePasswords[item._id || item.id] ? <EyeSlashIcon /> : <EyeIcon />}
+                    </button>
+                  </div>
+                </td>
+                <td className="p-3 border text-center space-x-2">
+                  <button onClick={() => copyText(item.password)}><CopyIcon /></button>
+                  <button onClick={() => editPassword(item._id || item.id)}><EditIcon /></button>
+                  <button onClick={() => deletePassword(item._id || item.id)}><DeleteIcon /></button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
 
