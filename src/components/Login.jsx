@@ -126,12 +126,13 @@ const Login = () => {
               onChange={handleChange}
               className="w-full p-3 border border-purple-400 rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
             />
-                 <img
-                src={showPassword ? "/icons/eyecross.png" : "/icons/eye.png"}
-                alt="toggle visibility"
-                className="w-6 h-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                onClick={() => setShowPassword(!showPassword)}
-              />
+              <span className="absolute transform -translate-y-1/2 right-3 top-1/2">
+                {showPassword ? (
+                  <EyeSlashIcon className="w-5 h-5" onClick={togglePasswordVisibility} />
+                ) : (
+                  <EyeIcon className="w-5 h-5" onClick={togglePasswordVisibility} />
+                )}
+              </span>
             </div>
             <button
               type="submit"
