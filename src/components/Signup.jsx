@@ -37,7 +37,7 @@ const Signup = () => {
         const data = await response.json();
         toast(data.error || 'User already exists', { type: 'error' });
       }
-    } catch (error) {
+    } catch {
       toast('Failed to sign up', { type: 'error' });
     } finally {
       setLoading(false);
