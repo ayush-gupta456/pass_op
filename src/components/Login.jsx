@@ -18,31 +18,35 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.username || !form.password) {
-      toast("Please fill all fields", { type: "error" });
+      toast.error("Please fill all fields");
       return;
     }
     try {
       const response = await fetch("https://pass-op-dkz6.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          email: form.username,
+          password: form.password,
+        }),
       });
+
       const data = await response.json();
       if (response.ok) {
-        toast("Login successful", { type: "success" });
+        toast.success("Login successful");
         localStorage.setItem("token", data.token);
         navigate("/dashboard");
       } else {
-        toast(data.error || "Login failed", { type: "error" });
+        toast.error(data.message || data.error || "Login failed");
       }
     } catch (error) {
-      toast("Something went wrong", { type: "error" });
+      toast.error("Something went wrong");
     }
   };
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={5000} theme="dark" />
+      <ToastContainer position="top-right" autoClose={4000} theme="dark" />
 
       <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-purple-50 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] px-4 py-12">
 
@@ -52,7 +56,6 @@ const Login = () => {
           </h2>
           <p className="text-gray-700 text-lg leading-relaxed mb-6">
             <strong>passKEEPER</strong> is a secure and intuitive password manager built using the MERN stack. It allows users to safely store, manage, and retrieve their passwords from anywhere.
-            With encrypted backend storage and real-time accessibility, your credentials stay safe yet accessible.
           </p>
           <ul className="space-y-4">
             <li className="flex items-start gap-3">
@@ -85,10 +88,11 @@ const Login = () => {
             <input
               value={form.username}
               onChange={handleChange}
-              placeholder="Username or Email"
+              placeholder="Email"
               className="w-full p-4 py-1 border border-purple-500 rounded-full"
               type="text"
               name="username"
+              required
             />
             <div className="relative">
               <input
@@ -98,6 +102,7 @@ const Login = () => {
                 className="w-full p-4 py-1 border border-purple-500 rounded-full pr-10"
                 type={showPassword ? "text" : "password"}
                 name="password"
+                required
               />
               <img
                 src={showPassword ? "/icons/eyecross.png" : "/icons/eye.png"}
@@ -140,6 +145,7 @@ const Login = () => {
               placeholder="Enter your registered email"
               value={forgotEmail}
               onChange={e => setForgotEmail(e.target.value)}
+              required
             />
             <div className="flex justify-center gap-4">
               <button
@@ -148,7 +154,7 @@ const Login = () => {
                 disabled={forgotLoading}
                 onClick={async () => {
                   if (!forgotEmail || forgotEmail.length < 4) {
-                    toast('Please enter a valid email', { type: 'error' });
+                    toast.error('Please enter a valid email');
                     return;
                   }
                   setForgotLoading(true);
@@ -160,14 +166,14 @@ const Login = () => {
                     });
                     const data = await response.json();
                     if (response.ok) {
-                      toast(data.message || 'Password reset email sent!', { type: 'success' });
+                      toast.success(data.message || 'Password reset email sent!');
                       setShowForgot(false);
                       setForgotEmail('');
                     } else {
-                      toast(data.error || 'Failed to send reset email', { type: 'error' });
+                      toast.error(data.error || 'Failed to send reset email');
                     }
                   } catch (err) {
-                    toast('Failed to send reset email', { type: 'error' });
+                    toast.error('Failed to send reset email');
                   } finally {
                     setForgotLoading(false);
                   }
@@ -178,7 +184,10 @@ const Login = () => {
               <button
                 type="button"
                 className="px-6 py-2 text-gray-700 bg-gray-200 rounded-full"
-                onClick={() => { setShowForgot(false); setForgotEmail(''); }}
+                onClick={() => {
+                  setShowForgot(false);
+                  setForgotEmail('');
+                }}
               >
                 Cancel
               </button>
