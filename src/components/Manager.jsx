@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { v4 as uuidv4 } from 'uuid';
 import { CopyIcon, DeleteIcon, EditIcon, EyeIcon, EyeSlashIcon, GenerateIcon, SaveIcon } from './Icons';
 
 /**
@@ -18,11 +17,7 @@ const Manager = () => {
   const [visiblePasswords, setVisiblePasswords] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // FOR LOCAL DEVELOPMENT - Using proxy
   const API_URL_BASE = 'https://pass-op-dkz6.onrender.com/api/passwords';
-  // FOR DEPLOYMENT - Update the line above to your production URL:
-  // const API_URL_BASE = 'https://your-production-domain.com/api/passwords';
-
 
   /**
    * Fetches the user's passwords from the backend.
@@ -86,19 +81,10 @@ const Manager = () => {
 
     try {
       setLoading(true);
-      const newPassword = { ...form, id: form.id || uuidv4() };
-      let updatedPasswords;
-      if (form.id) {
-        updatedPasswords = passwordArray.map(item => item.id === form.id ? newPassword : item);
-      } else {
-        updatedPasswords = [...passwordArray, newPassword];
-      }
-
-      setPasswordArray(updatedPasswords);
-
       const token = localStorage.getItem('token');
       const url = form.id ? `${API_URL_BASE}/${form.id}` : API_URL_BASE;
       const method = form.id ? 'PUT' : 'POST';
+      
       const response = await fetch(url, {
         method,
         headers: {
@@ -110,12 +96,17 @@ const Manager = () => {
 
       if (!response.ok) throw new Error(`Failed to ${method} password`);
 
+      // Clear form and show success message
       setForm({ site: "", username: "", password: "" });
       toast(form.id ? 'Password Updated!' : 'Password Saved!', { type: "success" });
+      
+      // Refresh the password list from backend
+      await fetchPasswords();
+      
     } catch (err) {
       console.error('Error saving password:', err);
       setError(err.message);
-      toast('Saved locally only', { type: "warning" });
+      toast('Error saving password', { type: "error" });
     } finally {
       setLoading(false);
     }
@@ -130,23 +121,26 @@ const Manager = () => {
 
     try {
       setLoading(true);
-      const updatedPasswords = passwordArray.filter(item => (item.id || item._id) !== id);
-      setPasswordArray(updatedPasswords);
-
       const token = localStorage.getItem('token');
+      
       const response = await fetch(`${API_URL_BASE}/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
+      
       if (!response.ok) throw new Error('Failed to delete from backend');
 
       toast('Password Deleted!', { type: "success" });
+      
+      // Refresh the password list from backend
+      await fetchPasswords();
+      
     } catch (err) {
       console.error('Error deleting password:', err);
       setError(err.message);
-      toast('Deleted locally only', { type: "warning" });
+      toast('Error deleting password', { type: "error" });
     } finally {
       setLoading(false);
     }
