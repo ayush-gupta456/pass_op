@@ -4,11 +4,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import { CopyIcon, DeleteIcon, EditIcon, EyeIcon, EyeSlashIcon, GenerateIcon, SaveIcon } from './Icons';
 
-/**
- * The Manager component is the main component of the application.
- * It allows users to manage their passwords.
- * @returns {React.ReactElement} - The manager component.
- */
 const Manager = () => {
   const passwordRef = useRef();
   const [form, setForm] = useState({ site: "", username: "", password: "" });
@@ -18,24 +13,15 @@ const Manager = () => {
   const [visiblePasswords, setVisiblePasswords] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const useBackend = true; // Always use backend
-  // FOR LOCAL DEVELOPMENT - Using proxy
+  const useBackend = true;
   const API_URL_BASE = 'https://pass-op-dkz6.onrender.com/api/passwords';
-  // FOR DEPLOYMENT - Update the line above to your production URL:
-  // const API_URL_BASE = 'https://your-production-domain.com/api/passwords';
 
-
-  /**
-   * Fetches the user's passwords from the backend.
-   */
   const fetchPasswords = async () => {
     const token = localStorage.getItem('token');
     if (!token) return;
-
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch(API_URL_BASE, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -55,18 +41,11 @@ const Manager = () => {
     fetchPasswords();
   }, []);
 
-  /**
-   * Copies the given text to the clipboard.
-   * @param {string} text - The text to copy.
-   */
   const copyText = (text) => {
     toast('Copied to clipboard!', { position: "top-right", autoClose: 5000, theme: "dark" });
     navigator.clipboard.writeText(text);
   };
 
-  /**
-   * Toggles the visibility of the password in the form.
-   */
   const togglePasswordVisibility = () => {
     if (passwordRef.current) {
       const isPasswordHidden = passwordRef.current.type === "password";
@@ -75,28 +54,14 @@ const Manager = () => {
     }
   };
 
-  /**
-   * Saves or updates a password.
-   */
   const savePassword = async () => {
     const { site, username, password } = form;
     if (site.length < 4 || username.length < 4 || password.length < 4) {
       toast('Fields must be at least 4 characters', { type: "error" });
       return;
     }
-
     try {
       setLoading(true);
-      const newPassword = { ...form, id: form.id || uuidv4() };
-      let updatedPasswords;
-      if (form.id) {
-        updatedPasswords = passwordArray.map(item => item.id === form.id ? newPassword : item);
-      } else {
-        updatedPasswords = [...passwordArray, newPassword];
-      }
-
-      setPasswordArray(updatedPasswords);
-
       const token = localStorage.getItem('token');
       const url = form.id ? `${API_URL_BASE}/${form.id}` : API_URL_BASE;
       const method = form.id ? 'PUT' : 'POST';
@@ -108,8 +73,17 @@ const Manager = () => {
         },
         body: JSON.stringify({ site, username, password }),
       });
-
       if (!response.ok) throw new Error(`Failed to ${method} password`);
+
+      // Update passwordArray after successful save
+      const updatedPassword = await response.json();
+      setPasswordArray(prev => {
+        if (form.id) {
+          return prev.map(p => (p.id === form.id || p._id === form.id) ? updatedPassword : p);
+        } else {
+          return [...prev, updatedPassword];
+        }
+      });
 
       setForm({ site: "", username: "", password: "" });
       toast(form.id ? 'Password Updated!' : 'Password Saved!', { type: "success" });
@@ -122,18 +96,12 @@ const Manager = () => {
     }
   };
 
-  /**
-   * Deletes a password.
-   * @param {string} id - The ID of the password to delete.
-   */
   const deletePassword = async (id) => {
     if (!window.confirm("Delete this password?")) return;
-
     try {
       setLoading(true);
       const updatedPasswords = passwordArray.filter(item => (item.id || item._id) !== id);
       setPasswordArray(updatedPasswords);
-
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL_BASE}/${id}`, {
         method: 'DELETE',
@@ -142,7 +110,6 @@ const Manager = () => {
         }
       });
       if (!response.ok) throw new Error('Failed to delete from backend');
-
       toast('Password Deleted!', { type: "success" });
     } catch (err) {
       console.error('Error deleting password:', err);
@@ -153,10 +120,6 @@ const Manager = () => {
     }
   };
 
-  /**
-   * Populates the form with the data of the password to be edited.
-   * @param {string} id - The ID of the password to edit.
-   */
   const editPassword = (id) => {
     const passwordToEdit = passwordArray.find(i => (i.id || i._id) === id);
     if (passwordToEdit) {
@@ -167,18 +130,10 @@ const Manager = () => {
     }
   };
 
-  /**
-   * Handles changes to the form fields.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
-   */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  /**
-   * Toggles the visibility of a password in the table.
-   * @param {string} id - The ID of the password.
-   */
   const togglePasswordVisibilityInTable = (id) => {
     setVisiblePasswords(prev => ({
       ...prev,
@@ -186,9 +141,6 @@ const Manager = () => {
     }));
   };
 
-  /**
-   * Generates a random password.
-   */
   const generatePassword = () => {
     const length = 14;
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~|}{[]:;?><,./-=";
